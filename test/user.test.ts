@@ -1,8 +1,14 @@
 import supertest from 'supertest';
 import { web } from '../src/application/web';
 import { logger } from '../src/application/logging';
+import { UserTes } from './test-util';
 
 describe('POST /api/users', () => {
+  // delete data user after runing tes
+  afterEach(async () => {
+    await UserTes.delete();
+  });
+
   it('should reject register new user if request is invalid', async () => {
     const response = await supertest(web).post('/api/users').send({
       username: '',
@@ -17,14 +23,14 @@ describe('POST /api/users', () => {
 
   it('should register new user', async () => {
     const response = await supertest(web).post('/api/users').send({
-      username: 'Aziz',
-      password: 'rahasia',
-      name: 'Aziz Muslim',
+      username: 'test',
+      password: 'test',
+      name: 'test',
     });
 
     logger.debug(response.body);
     expect(response.status).toBe(200);
-    expect(response.body.data.username).toBe('Aziz');
-    expect(response.body.data.name).toBe('Aziz Muslim');
+    expect(response.body.data.username).toBe('test');
+    expect(response.body.data.name).toBe('test');
   });
 });
