@@ -12,3 +12,16 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// with once login devices (token)
+model User {
+  username String @id @db.VarChar(100)
+  password String @db.VarChar(100)
+  name String @db.VarChar(100)
+  token String? @db.VarChar(100)
+
+
+// change name tabel
+@@map("users")
+
+}
