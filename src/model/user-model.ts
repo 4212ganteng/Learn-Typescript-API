@@ -1,3 +1,5 @@
+import { User } from '@prisma/client';
+
 export type UserResponse = {
   username: string;
   name: string;
@@ -9,3 +11,10 @@ export type CreateUserRequest = {
   name: string;
   password: string;
 };
+
+export function toUserResponse(user: User): UserResponse {
+  return {
+    name: user.name,
+    username: user.username,
+  };
+}
