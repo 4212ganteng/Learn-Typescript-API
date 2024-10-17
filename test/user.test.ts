@@ -155,4 +155,17 @@ describe('PATCH /apiusers/current', () => {
     expect(response.status).toBe(400);
     expect(response.body.errors).toBeDefined();
   });
+
+  it('should be able update user name', async () => {
+    const response = await supertest(web)
+      .patch('/api/users/current')
+      .set('X-API-TOKEN', 'test')
+      .send({
+        name: 'abc',
+      });
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.name).toBe('abc');
+  });
 });
