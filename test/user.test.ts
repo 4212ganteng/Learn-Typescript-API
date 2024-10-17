@@ -4,6 +4,7 @@ import { logger } from '../src/application/logging';
 import { UserTes } from './test-util';
 import bcrypt from 'bcrypt';
 
+// create user
 describe('POST /api/users', () => {
   // delete data user after runing tes
   afterEach(async () => {
@@ -36,6 +37,7 @@ describe('POST /api/users', () => {
   });
 });
 
+// login user
 describe('POST /api/users/login', () => {
   beforeEach(async () => {
     await UserTes.create();
@@ -119,7 +121,7 @@ describe('GET /api/users/current', () => {
 });
 
 // update user
-describe('PATCH /apiusers/current', () => {
+describe('PATCH /api/users/current', () => {
   beforeEach(async () => {
     await UserTes.create();
   });
@@ -183,5 +185,30 @@ describe('PATCH /apiusers/current', () => {
 
     const user = await UserTes.get();
     expect(await bcrypt.compare('abc', user.password)).toBe(true);
+  });
+});
+
+// logout user
+describe('DELETE /api/users/current', () => {
+  beforeEach(async () => {
+    await UserTes.create();
+  });
+
+  // delete user db after tes runing
+  afterEach(async () => {
+    await UserTes.delete();
+  });
+
+  it('should be able to logout', async () => {
+    const response = await supertest(web)
+      .delete('/api/users/current')
+      .set('X-API-TOKEN', 'test');
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data).toBe('OK');
+
+    const user = await UserTes.get();
+    expect(user.token).toBeNull();
   });
 });
