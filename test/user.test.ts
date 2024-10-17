@@ -2,7 +2,7 @@ import supertest from 'supertest';
 import { web } from '../src/application/web';
 import { logger } from '../src/application/logging';
 import { UserTes } from './test-util';
-
+import bcrypt from 'bcrypt';
 // describe('POST /api/users', () => {
 //   // delete data user after runing tes
 //   afterEach(async () => {
@@ -167,5 +167,20 @@ describe('PATCH /apiusers/current', () => {
     logger.debug(response.body);
     expect(response.status).toBe(200);
     expect(response.body.data.name).toBe('abc');
+  });
+
+  it('should be able update user password', async () => {
+    const response = await supertest(web)
+      .patch('/api/users/current')
+      .set('X-API-TOKEN', 'test')
+      .send({
+        password: 'abc',
+      });
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+
+    const user = await UserTes.get();
+    expect(await bcrypt.compare('abc', user.password)).toBe(true);
   });
 });
