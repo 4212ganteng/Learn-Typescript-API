@@ -116,3 +116,29 @@ describe('GET /api/users/current', () => {
     expect(response.body.errors).toBeDefined();
   });
 });
+
+// update user
+describe('PATCH /apiusers/current', () => {
+  beforeEach(async () => {
+    await UserTes.create();
+  });
+
+  // delete user db after tes runing
+  afterEach(async () => {
+    await UserTes.delete();
+  });
+
+  it('should reject update user if request valid but token invalid', async () => {
+    const response = await supertest(web)
+      .patch('/apiusers/current')
+      .set('X-API-TOKEN', 'salah')
+      .send({
+        name: 'benar',
+        password: 'benar',
+      });
+
+    logger.debug(response.body);
+    expect(response.status).toBe(401);
+    expect(response.body.errors).toBeDefined();
+  });
+});
