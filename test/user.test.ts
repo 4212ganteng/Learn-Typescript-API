@@ -82,3 +82,27 @@ describe('POST /api/users/login', () => {
     expect(response.body.errors).toBeDefined();
   });
 });
+
+// get user current
+
+describe('GET /api/users/current', () => {
+  beforeEach(async () => {
+    await UserTes.create();
+  });
+
+  // delete user db after tes runing
+  afterEach(async () => {
+    await UserTes.delete();
+  });
+
+  it('should be able to get user', async () => {
+    const response = await supertest(web)
+      .get('/api/users/current')
+      .set('X-API-TOKEN', 'test');
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.username).toBe('test');
+    expect(response.body.data.name).toBe('test');
+  });
+});
