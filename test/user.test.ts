@@ -211,4 +211,14 @@ describe('DELETE /api/users/current', () => {
     const user = await UserTes.get();
     expect(user.token).toBeNull();
   });
+
+  it('should reject if token is wrong', async () => {
+    const response = await supertest(web)
+      .delete('/api/users/current')
+      .set('X-API-TOKEN', 'salah');
+
+    logger.debug(response.body);
+    expect(response.status).toBe(401);
+    expect(response.body.errors).toBeDefined();
+  });
 });
