@@ -105,4 +105,14 @@ describe('GET /api/users/current', () => {
     expect(response.body.data.username).toBe('test');
     expect(response.body.data.name).toBe('test');
   });
+
+  it('should reject  cause wrong token', async () => {
+    const response = await supertest(web)
+      .get('/api/users/current')
+      .set('X-API-TOKEN', 'salah');
+
+    logger.debug(response.body);
+    expect(response.status).toBe(401);
+    expect(response.body.errors).toBeDefined();
+  });
 });
