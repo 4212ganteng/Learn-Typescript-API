@@ -1,10 +1,9 @@
 // Create contact
 
 import supertest from 'supertest';
-import { ContactTes, UserTes } from './test-util';
-import { web } from '../src/application/web';
 import { logger } from '../src/application/logging';
-import { Contact } from '@prisma/client';
+import { web } from '../src/application/web';
+import { ContactTes, UserTes } from './test-util';
 
 describe('POST /api/contact', () => {
   beforeEach(async () => {
@@ -72,6 +71,55 @@ describe('GET /api/contact/:contactId', () => {
 
     logger.debug(response.body);
     expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+});
+
+describe('PUT /api/contacts/:contactId', () => {
+  beforeEach(async () => {
+    await UserTes.create();
+    await ContactTes.create();
+  });
+
+  afterEach(async () => {
+    await ContactTes.deleteAll(), await UserTes.delete();
+  });
+
+  it('should be able to update contact', async () => {
+    const contact = await ContactTes.get();
+    const response = await supertest(web)
+      .put(`/api/contacts/${contact.id}`)
+      .set('X-API-TOKEN', 'test')
+      .send({
+        first_name: 'aziz',
+        last_name: 'ganteng',
+        email: 'aziz@mail.com',
+        phone: '0855878',
+      });
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.id).toBe(contact.id);
+    expect(response.body.data.first_name).toBe('aziz');
+    expect(response.body.data.last_name).toBe('ganteng');
+    expect(response.body.data.email).toBe('aziz@mail.com');
+    expect(response.body.data.phone).toBe('0855878');
+  });
+
+  it('should be reject update contact if request is invalid', async () => {
+    const contact = await ContactTes.get();
+    const response = await supertest(web)
+      .put(`/api/contacts/${contact.id}`)
+      .set('X-API-TOKEN', 'test')
+      .send({
+        first_name: '',
+        last_name: '',
+        email: 'aziz.com',
+        phone: '',
+      });
+
+    logger.debug(response.body);
+    expect(response.status).toBe(400);
     expect(response.body.errors).toBeDefined();
   });
 });

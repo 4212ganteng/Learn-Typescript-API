@@ -36,6 +36,9 @@ export class ContactController {
   static async update(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const request: updateContactRequest = req.body as updateContactRequest;
+      // re asign id from params
+      request.id = Number(req.params.contactId);
+
       const response = await ContactService.update(req.user!, request);
 
       res.status(200).json({

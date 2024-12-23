@@ -21,6 +21,7 @@ model User {
   token    String? @db.VarChar(100)
 
   contacts Contact[]
+  licenses License[]
 
   // change name tabel
   @@map("users")
@@ -52,4 +53,33 @@ model Address {
   contact Contact @relation(fields: [contact_id], references: [id])
 
   @@map("addresses")
+}
+
+model Apk {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  version     String   @db.VarChar(100)
+  description String?  @db.Text
+  url         String   @db.VarChar(255)
+  createdAt   DateTime @default(now())
+
+  licenses License[]
+
+  @@map("apks")
+}
+
+model License {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  apkId      Int
+  licenseKey String   @unique
+  hwid       String?
+  isActive   Boolean  @default(true)
+  expiryDate DateTime
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [username])
+  apk  Apk  @relation(fields: [apkId], references: [id])
+
+  @@map("licenses")
 }
