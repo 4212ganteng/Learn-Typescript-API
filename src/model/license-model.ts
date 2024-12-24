@@ -14,6 +14,7 @@ export type CreateLicenseRequest = {
   userId: string;
   apkId: number;
   durationDays: number;
+  hwid: string | null;
 };
 
 export function toLicenseResponse(license: License): LicenseResponse {

@@ -31,6 +31,8 @@ export class LicenseController {
       const licenseKey = req.query.licenseKey as string;
       const hwid = req.query.hwid as string;
 
+      console.log(req.query);
+
       await LicenseService.validateLicense(licenseKey, hwid);
       res.status(200).json({
         message: 'License is valid',

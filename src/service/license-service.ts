@@ -20,7 +20,7 @@ export class LicenseService {
         userId: request.userId,
         apkId: request.apkId,
         licenseKey,
-        hwid: null,
+        hwid: request.hwid,
         isActive: true,
         expiryDate,
       },
@@ -46,18 +46,6 @@ export class LicenseService {
     // cek expired date
     if (new Date() > license.expiryDate) {
       throw new Error('License has expired');
-    }
-
-    // regist hwid if not exist
-    if (!license.hwid) {
-      await prismaClient.license.update({
-        where: {
-          id: license.id,
-        },
-        data: {
-          hwid,
-        },
-      });
     }
 
     // cek hwid
